@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% block title %}Detalles de revista con proveedor{% endblock %}
+{% block content %}
+
+
+
+  <style>
+   .loading-spinner p {
+  color: #fff;
+  font-size: 16px;
+  margin-top: 10px;
+}
+ .loading-spinner {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 6px solid #f3f3f3;
+  border-top-color: #3498db;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+
+</style>
+
+
+<div class="container d-flex justify-content-center my-5">
+    <div class="row">
+        <div class="card h-auto" style="width: 1000px; max-height: 520px; margin-top: 30px; overflow-y: scroll;">
+            <div class="card-body">
+                <div>
+                    <h1>{{ proveedor.repository_name }}</h1>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>ISSN:</strong> {{ proveedor.revista.issn_e }}</p>
+                            <p><strong>País:</strong> {{ proveedor.revista.pais }}</p>
+                            <p><strong>Idioma:</strong> {{ proveedor.revista.idioma }}</p>
+                            <p><strong>Editores:</strong> {% for editor in proveedor.revista.editores.all %} {{ editor.nombre }} {% endfor %}</p>
+                            <p><strong>Clasificación:</strong> {% for clasi in clasificaciones %} {{ clasi.valor }} {% endfor %}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>SubClasificacion:</strong> {% for sub in proveedor.revista.subclasificacion.all %} <a href="{% url 'listar_revistas' sub.id %}">{{ sub.valor }}</a> {% endfor %}</p>
+                            <p><strong>Autores:</strong> {% for editor in proveedor.revista.autores.all %} {{ editor.nombre }} {% endfor %}</p>
+                            <p><strong>Arbitraje:</strong> {{ proveedor.revista.arbitraje }}</p>
+                            <p><strong>URL Base:</strong> {{ proveedor.base_url }}</p>
+                        </div>
+                    </div>
+                    <p><strong>Descripción:</strong> {{ proveedor.revista.descripcion }}</p>
+                    {% if request.user.usuario.rol.nombre == 'Especialista' %}
+                    <div class="card-footer text-center custom-footer" style="background-color: white;">
+                        <a href="#" class="btn btn-danger mr-2" style="height: 40px" data-toggle="modal" data-target="#eliminarProveedorModal">Eliminar proveedor</a>
+                        {% if proveedor.revista %}
+                        <a href="{% url 'modificar_revista' proveedor.revista.id %}" class="btn btn-primary mr-2" style="height: 40px">Modificar revista</a>
+                        <a href="{% url 'cosechar_articulos' proveedor.id %}" class="btn btn-primary mr-2" data-revista-id="{{ proveedor.id }}" style="height: 40px">Cosechar artículos</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="card h-100" style="width: 940px">
+                        <div class="card-body">
+                            <h3>Sumarios de la revista</h3>
+                            <div class="table-responsive" style="width: 900px">
+                                <div style="max-height: 800px; overflow-y: scroll;">
+                                    <table class="table table-striped table-hover" style="width: 100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 30px">Año</th>
+                                                <th style="width: 30px">Volumen</th>
+                                                <th style="width: 500px">Número</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for anio_data in lista_anidada %}
+                                            {% if anio_data.anio %}
+                                            <tr>
+                                               <td style="vertical-align: middle;">
+    <a href="{% url 'listar_articulos_por_anno' anio_data.anio proveedor.id %}"
+       class="d-inline-block"
+       style="font-size: 20px; height: 40px; line-height: 40px;">
+        {{ anio_data.anio }}
+    </a>
+<span class="badge badge-primary d-inline-block align-middle" data-toggle="tooltip" data-placement="top" title="Total de artículos">{{ anio_data.articulos }}</span>
+ <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+</td>
+<td style="vertical-align: middle;">
+    {% for volumen_data in anio_data.volumenes %}
+        <div class="dropdown d-inline-block mr-2">
+            <button class="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    id="dropdownMenuButton-{{ volumen_data.volumen.id }}"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    style="width: 100px; height: 35px; margin-top: 10px; margin-bottom: 10px">
+                {{ volumen_data.volumen.volumen }}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton-{{ volumen_data.volumen.id }}">
+                <a class="dropdown-item" href="{% url 'listar_articulos_por_vol' volumen_data.volumen.id proveedor.id %}">Listar artículos por volumen</a>
+      <a class="dropdown-item" id="enlace-actualizar" href="{% url 'actualizar_vol' volumen_data.volumen.id %}">Actualizar volumen</a>  </div>
+        </div>
+    {% endfor %}
+</td>
+                                                <td>
+                                                    {% for volumen_data in anio_data.volumenes %}
+                                                    {% for numero in volumen_data.numeros %}
+                                                    <a class="btn btn-primary mr-3" href="{% url 'listar_articulos_por_num' numero.id proveedor.id %}" style="margin-top: 10px;margin-bottom: 10px;margin-left: 3px;margin-right: 3px; height: 35px;">{{ numero.numero }}</a>
+{#                                                        <a class="btn btn-primary mr-2" href="{% url 'listar_articulos_por_num' numero.id proveedor.id %}">{{ numero.numero }}</a>#}
+                                                    {% endfor %}
+                                                    {% if not forloop.last %}<br>{% endif %}
+                                                    {% endfor %}
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="margin-bottom: 50px;margin-left: 100px;margin-top: -40px;">
+    <a class="btn btn-link mt-3" href="{% url 'listar_clasificaciones' %}" style="font-size: 15px">Volver a la lista de revistas</a>
+</div>
+<!-- Ventana Modal -->
+<div class="modal fade" id="eliminarProveedorModal" tabindex="-1" role="dialog" aria-labelledby="eliminarProveedorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eliminarProveedorModalLabel">Eliminar proveedor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este proveedor?
+            </div>
+            <div class="modal-footer">
+                <a type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+                <a href="{% url 'eliminar_proveedor' proveedor.id %}" class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loading-spinner" class="loading-spinner" style="display: none;">
+    <div class="spinner"></div>
+    <p style="text-align: center;">Actualizando...</p>
+</div>
+
+
+<script>
+  // Obtén una referencia al enlace
+  const enlaceActualizar = document.getElementById('enlace-actualizar');
+
+  // Obtén una referencia al spinner
+  const loadingSpinner = document.getElementById('loading-spinner');
+
+  // Agrega un evento click al enlace
+  enlaceActualizar.addEventListener('click', function(event) {
+    // Muestra el spinner
+    loadingSpinner.style.display = 'block';
+  });
+</script>
+
+
+
+{% endblock %}
+
+
+

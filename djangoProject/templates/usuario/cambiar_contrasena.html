@@ -1,0 +1,224 @@
+{#<h2>Cambiar Contraseña</h2>#}
+{#  <form method="post">#}
+{#    {% csrf_token %}#}
+{#    {{ formulario.as_p }}#}
+{#    <button type="submit">Cambiar Contraseña</button>#}
+{#  </form>#}
+
+
+{% extends 'base.html' %}
+{% block title %}Cambiar Password{% endblock %}
+{% block content %}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+   <style>
+
+        .card {
+            width: 500px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .card-title {
+            font-size: 30px;
+
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid #ced4da;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004a99;
+        }
+        .alert {
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        .is-valid {
+            border-color: #28a745;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+          #help{
+          height: 60px;
+          font-size: 16px;
+         margin-bottom: 10px;
+      }
+      .form-control {
+            height: 35px;
+            font-size: 14px;
+            width: 300px;
+            display: block;
+            margin: 0 auto;
+        }
+       
+        .form-container {
+            display: flex;
+        
+            align-items: center;
+            height: 100vh;
+        }
+
+    </style>
+</head>
+<body>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card">
+        <h1 class="card-title">Cambiar Contraseña</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <form method="post" id="password-form">
+            {% csrf_token %}
+            {% for field in formulario %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="invalid-feedback">
+                            {% for error in field.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if field.name == 'new_password1' %}
+                        <small class="form-text text-danger" id="password-match-error" style="display: none;">La contraseña nueva debe diferir de la antigua.</small>
+                        <small class="form-text text-danger" id="password-length-error" style="display: none;">La contraseña debe tener al menos 8 caracteres.</small>
+                        <small class="form-text text-danger" id="password-numeric-error" style="display: none;">La contraseña no debe ser totalmente numérica.</small>
+                    {% endif %}
+                    {% if field.name == 'new_password2' %}
+                        <small class="form-text text-danger" id="password-confirmation-error" style="display: none;">La nueva contraseña y la confirmación deben ser iguales.</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+          <div class="card" style="width: 442px;height: 100px;margin-bottom: 20px">
+    <div class="card-body" id="help" >
+        <small class="form-text text-muted password1-help-text" style="margin-top: -40px;width: 400px; margin-left: -10px">
+            Se le aconseja:
+            <br>
+            - Su contraseña no debe asemejarse tanto a su otra información personal.
+            <br> - Su contraseña no debe ser una clave utilizada comúnmente.
+        </small>
+    </div>
+</div>
+             <div class="form-signin-buttons d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary" id="submit-btn" style=" height: 45px; font-size: 16px; margin-right: 10px;">Cambiar Contraseña</button>
+         <button class="btn btn-lg btn-secondary"  style="width: 140px; height: 45px; font-size: 16px;" onclick="goBack()">Atrás</button>
+             </div>
+        </form>
+    </div>
+</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var oldPasswordInput = document.getElementById('id_old_password');
+            var newPassword1Input = document.getElementById('id_new_password1');
+            var newPassword2Input = document.getElementById('id_new_password2');
+            var passwordMatchError = document.getElementById('password-match-error');
+            var passwordLengthError = document.getElementById('password-length-error');
+            var passwordNumericError = document.getElementById('password-numeric-error');
+            var passwordConfirmationError = document.getElementById('password-confirmation-error');
+
+            oldPasswordInput.addEventListener('input', validatePasswords);
+            newPassword1Input.addEventListener('input', validatePasswords);
+            newPassword1Input.addEventListener('input', validatePasswordLength);
+            newPassword1Input.addEventListener('input', validatePasswordIsNotNumeric);
+            newPassword2Input.addEventListener('input', validatePasswordConfirmation);
+
+            function validatePasswords() {
+                var oldPassword = oldPasswordInput.value.trim();
+                var newPassword1 = newPassword1Input.value.trim();
+
+                if (oldPassword === '' || newPassword1 === '') {
+                    oldPasswordInput.classList.remove('is-invalid', 'is-valid');
+                    newPassword1Input.classList.remove('is-invalid', 'is-valid');
+                    passwordMatchError.style.display = 'none';
+                } else if (oldPassword === newPassword1) {
+                    oldPasswordInput.classList.add('is-invalid');
+                    newPassword1Input.classList.add('is-invalid');
+                    passwordMatchError.style.display = 'block';
+                    passwordLengthError.style.display = 'none';
+                    passwordNumericError.style.display = 'none';
+                    passwordConfirmationError.style.display = 'none';
+                } else {
+                    oldPasswordInput.classList.remove('is-invalid', 'is-valid');
+                    newPassword1Input.classList.remove('is-invalid', 'is-valid');
+                    passwordMatchError.style.display = 'none';
+                }
+            }
+
+            function validatePasswordLength() {
+                var newPassword1 = newPassword1Input.value.trim();
+
+                if (newPassword1.length < 8) {
+                    newPassword1Input.classList.add('is-invalid');
+                    passwordLengthError.style.display = 'block';
+                    passwordNumericError.style.display = 'none';
+                    passwordConfirmationError.style.display = 'none';
+                } else {
+                    newPassword1Input.classList.remove('is-invalid', 'is-valid');
+                    passwordLengthError.style.display = 'none';
+                }
+            }
+
+            function validatePasswordIsNotNumeric() {
+                var newPassword1 = newPassword1Input.value.trim();
+
+                if (/^\d{7,}$/.test(newPassword1)) {
+                    newPassword1Input.classList.add('is-invalid');
+                    passwordNumericError.style.display = 'block';
+                    passwordConfirmationError.style.display = 'none';
+                } else {
+                    newPassword1Input.classList.remove('is-invalid', 'is-valid');
+                    passwordNumericError.style.display = 'none';
+                }
+            }
+
+            function validatePasswordConfirmation() {
+                var newPassword1 = newPassword1Input.value.trim();
+                var newPassword2 = newPassword2Input.value.trim();
+
+                if (newPassword1 !== newPassword2) {
+                    newPassword2Input.classList.add('is-invalid');
+                    passwordConfirmationError.style.display = 'block';
+                } else {
+                    newPassword2Input.classList.remove('is-invalid', 'is-valid');
+                    passwordConfirmationError.style.display = 'none';
+                }
+            }
+        });
+
+function goBack() {
+  history.back();
+}
+
+    </script>
+</body>
+{% endblock %}
+

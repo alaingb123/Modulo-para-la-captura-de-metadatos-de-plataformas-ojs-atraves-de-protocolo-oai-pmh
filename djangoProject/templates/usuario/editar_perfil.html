@@ -1,0 +1,117 @@
+
+{% extends 'base.html' %}
+{% block title %}Editar perfil{% endblock %}
+{% block content %}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+
+    .edit-container {
+      max-width: 600px;
+        width:600px;
+      padding: 40px;
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .edit-container h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .edit-container .form-group {
+      margin-bottom: 20px;
+    }
+    .edit-container .form-control {
+      border-radius: 3px;
+    }
+    .edit-container button {
+      width: 100%;
+      border-radius: 3px;
+    }
+    .modal-content {
+      border-radius: 5px;
+    }
+    .form-control:focus {
+  background-color: #f8f9fa;
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+small{
+    margin-top:20px;
+    margin-bottom:20px;
+}
+  </style>
+
+<body>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+  <div class="edit-container" style="margin-top: -90px">
+    <h2>Editar Perfil</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ formulario.first_name.id_for_label }}">{{ formulario.first_name.label }}</label>
+            {{ formulario.first_name }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ formulario.last_name.id_for_label }}">{{ formulario.last_name.label }}</label>
+            {{ formulario.last_name }}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ formulario.username.id_for_label }}">{{ formulario.username.label }}</label>
+            {{ formulario.username }}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ formulario.email.id_for_label }}">{{ formulario.email.label }}</label>
+            {{ formulario.email }}
+          </div>
+        </div>
+      </div>
+         <div class="text-center">
+  <small class="form-text text-muted">
+  Para cambiar la contraseña, por favor, visita la <a href="{% url "cambiar_contrasena" %}">página de cambio de contraseña</a>.
+</small>
+         </div>
+   <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary mr-2" style="width: 170px; height: 45px; font-size: 16px; margin-right: 10px;">Guardar Cambios</button>
+
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmarEliminarModal" style="width: 170px; height: 45px; font-size: 16px; margin-right: 10px;">
+  Eliminar Usuario
+</button>
+
+      </div>
+   <!-- Ventana modal -->
+<div class="modal fade" id="confirmarEliminarModal" tabindex="-1" role="dialog" aria-labelledby="confirmarEliminarModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmarEliminarModalLabel">Confirmar Eliminación de Usuario</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="height: 50px;width: 50px">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar este usuario?
+      </div>
+      <div class="modal-footer">
+        <a type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</a>
+        <a href="{% url 'eliminar_usuario' %}" class="btn btn-danger">Eliminar</a>
+      </div>
+    </div>
+  </div>
+</div>
+    </form>
+  </div>
+</div>
+</body>
+
+
+{% endblock %}

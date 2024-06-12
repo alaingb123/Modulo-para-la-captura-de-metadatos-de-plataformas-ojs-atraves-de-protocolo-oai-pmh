@@ -1,0 +1,206 @@
+{#<h2>Crear Usuario</h2>#}
+{#  <form method="post">#}
+{#    {% csrf_token %}#}
+{#    {{ formulario.as_p }}#}
+{#    <button type="submit">Crear Usuario</button>#}
+{#  </form>#}
+
+{% extends 'base.html' %}
+{% block title %}Crear usuario{% endblock %}
+{% block content %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+      body {
+
+            color: #333333;
+            font-family: Arial,sans-serif;
+        }
+
+.form-signin button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+
+        .col-form-label{
+            font-size: 14px;
+        }
+
+        .form-signin {
+            width: 500px;
+            max-width: 500px;
+            padding: 15px;
+            margin: auto;
+             display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+        }
+        .form-signin .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-signin .form-control:focus {
+            z-index: 2;
+        }
+        .form-signin input[type="text"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+                height: 30px;
+            width: 300px;
+        }
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+             height: 30px;
+            width: 300px;
+        }
+
+        .form-text{
+            margin-bottom: 20px;
+        }
+
+      #div_form {
+            height: 100vh;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+      #help{
+          height: 60px;
+          font-size: 16px;
+         margin-bottom: 10px;
+      }
+
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center" id="div_form" >
+        <form class="form-signin shadow-sm p-3 mb-5 bg-white rounded" method="post">
+            {% csrf_token %}
+            <h1 class="h3 mb-3 font-weight-normal text-center">Crear usuario</h1>
+            <div class="form-group">
+<label for="{{ formulario.username.id_for_label }}" class="col-form-label">{{ formulario.username.label }}</label>
+                {{ formulario.username }}
+                <div id="username-validation-message" class="invalid-feedback d-none" style="width:300px;"></div>
+            </div>
+{#            {% if formulario.username.help_text %}#}
+{#            <small class="form-text text-muted">{{ formulario.username.help_text }}</small>#}
+{#            {% endif %}#}
+            {% for error in formulario.username.errors %}
+            <p class="text-danger" >{{ error }}</p>
+            {% endfor %}
+            <div class="form-group">
+                <label for="{{ formulario.password1.id_for_label }}" class="col-form-label">{{ formulario.password1.label }}</label>
+                {{ formulario.password1 }}
+                <div id="password1-validation-message" class="invalid-feedback d-none"></div>
+            </div>
+
+            {% for error in formulario.password1.errors %}
+            <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+            <div class="form-group">
+                <label for="{{ formulario.password2.id_for_label }}" class="col-form-label" >{{ formulario.password2.label }}</label>
+                {{ formulario.password2 }}
+                <div id="password2-validation-message" class="invalid-feedback d-none"></div>
+            </div>
+{#            {% if formulario.password2.help_text %}#}
+{#            <small class="form-text text-muted">{{ formulario.password2.help_text }}</small>#}
+{#            {% endif %}#}
+                {% if formulario.password1.help_text %}
+                    <div class="card">
+    <div class="card-body" id="help">
+        <small class="form-text text-muted password1-help-text" style="margin-top: -15px">
+            Se le aconseja:
+            <br>
+            - Su contraseña no debe asemejarse tanto a su otra información personal.
+            <br> - Su contraseña no debe ser una clave utilizada comúnmente.
+        </small>
+    </div>
+</div>
+{% endif %}
+
+            {% for error in formulario.password2.errors %}
+            <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+           <div class="form-signin-buttons d-flex justify-content-center">
+    <button class="btn btn-lg btn-primary" type="submit" style="width: 140px; height: 45px; font-size: 16px; margin-right: 10px;">Crear usuario</button>
+    <button class="btn btn-lg btn-secondary" type="submit" style="width: 140px; height: 45px; font-size: 16px;"  onclick="goBack()">Atrás</button>
+</div>
+</form>
+    </div>
+
+    <script>
+        var usernameInput = document.getElementById("{{ formulario.username.id_for_label }}");
+        var usernameValidationMessage = document.getElementById("username-validation-message");
+        var password1 = document.getElementById("{{ formulario.password1.id_for_label }}");
+        var password1ValidationMessage = document.getElementById("password1-validation-message");
+        var password2 = document.getElementById("{{ formulario.password2.id_for_label }}");
+        var password2ValidationMessage = document.getElementById("password2-validation-message");
+        var password1HelpText = document.getElementById("password1-help-text");
+
+        usernameInput.addEventListener("input", function() {
+            var username = usernameInput.value;
+            if (username.length === 0) {
+                usernameValidationMessage.classList.add("d-none");
+                usernameInput.classList.remove("is-invalid");
+            } else if (username.length > 150) {
+                usernameValidationMessage.textContent = "El nombre de usuario no puede tener más de 150 caracteres.";
+                usernameValidationMessage.classList.remove("d-none");
+                usernameInput.classList.add("is-invalid");
+            } else if (!/^[a-zA-Z0-9@\.\+\-_]+$/.test(username)) {
+                usernameValidationMessage.textContent = "El nombre de usuario solo puede contener letras, dígitos y los caracteres @/./+/-/_";
+                usernameValidationMessage.classList.remove("d-none");
+                usernameInput.classList.add("is-invalid");
+            } else {
+                usernameValidationMessage.classList.add("d-none");
+                usernameInput.classList.remove("is-invalid");
+            }
+        });
+
+              password1.addEventListener("input", function() {
+            var pass1 = password1.value;
+            if (pass1.length < 8) {
+                password1ValidationMessage.textContent = "La contraseña debe tener al least 8 caracteres.";
+                password1ValidationMessage.classList.remove("d-none");
+                password1.classList.add("is-invalid");
+                password1HelpText.classList.remove("d-none");
+            } else if (/^\d+$/.test(pass1)) {
+                password1ValidationMessage.textContent = "La contraseña no puede ser completamente numérica.";
+                password1ValidationMessage.classList.remove("d-none");
+                password1.classList.add("is-invalid");
+                password1HelpText.classList.remove("d-none");
+            } else {
+                password1ValidationMessage.classList.add("d-none");
+                password1.classList.remove("is-invalid");
+                password1HelpText.classList.add("d-none");
+            }
+        });
+
+        password2.addEventListener("input", function() {
+            var pass1 = password1.value;
+            var pass2 = password2.value;
+            if (pass1.length === pass2.length && pass1 !== pass2) {
+                password2ValidationMessage.textContent = "Las contraseñas no coinciden.";
+                password2ValidationMessage.classList.remove("d-none");
+                password2.classList.add("is-invalid");
+            } else {
+                password2ValidationMessage.classList.add("d-none");
+                password2.classList.remove("is-invalid");
+            }
+        });
+        function goBack() {
+  history.back();
+}
+
+    </script>
+</body>
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Guardar Productos</title>
+  <style>
+    .progress {
+      width: 50%;
+      margin: 20px auto;
+    }
+    .progress-bar {
+      background-color: #007bff;
+      width: 0%;
+      height: 30px;
+      color: #fff;
+      text-align: center;
+      line-height: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Guardar Productos</h1>
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+  <button id="guardarBtn">Guardar Productos</button>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var totalProductos = 10; // Total de productos que deseas guardar
+      var progreso = 0;
+
+      // Obtener el token CSRF
+      var csrftoken = getCookie('csrftoken');
+
+      // Función para obtener el valor del token CSRF
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      function actualizarBarraDeProgreso() {
+        var progresoActual = Math.floor((progreso / totalProductos) * 100);
+        $('.progress-bar').css('width', progresoActual + '%').attr('aria-valuenow', progresoActual);
+        $('.progress-bar').text(progresoActual + '%');
+
+        if (progreso < totalProductos) {
+          setTimeout(guardarProducto, 1000); // Simula el proceso de guardar un producto cada 1 segundo
+        } else {
+          $('.progress-bar').text('¡Guardado completado!');
+        }
+      }
+
+      function guardarProducto() {
+        // Aquí puedes realizar la lógica para guardar un producto en la base de datos utilizando Django
+        // Por ejemplo, puedes enviar una petición AJAX al servidor
+
+        // Simulación de guardado de producto
+        $.ajax({
+          url: '/guardar/', // URL de tu vista de Django para guardar el producto
+          method: 'POST',
+          data: {
+            // Datos del producto que deseas guardar
+            nombre: 'Producto ' + (progreso + 1)
+          },
+          headers: {
+            'X-CSRFToken': csrftoken // Incluir el token CSRF en la solicitud AJAX
+          },
+          success: function() {
+            console.log('Producto guardado:', progreso + 1);
+            progreso++;
+            actualizarBarraDeProgreso();
+          },
+          error: function(xhr, status, error) {
+            console.error('Error al guardar el producto:', error);
+          }
+        });
+      }
+
+      $('#guardarBtn').click(function() {
+        if (progreso === 0) {
+          actualizarBarraDeProgreso(); // Comienza la actualización de la barra de progreso al hacer clic en el botón
+        }
+      });
+    });
+  </script>
+</body>
+</html>

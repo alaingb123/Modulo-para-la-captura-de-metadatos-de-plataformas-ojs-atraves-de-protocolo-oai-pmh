@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Registrar Proveedor{% endblock %}
+{% block content %}
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+  body {
+    display: flex;
+
+    height: 100vh;
+  }
+
+  #cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .card {
+    width: 600px; /* Ajusta el ancho del card según tus necesidades */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-header {
+    background-color: white;
+    color: #1565C0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .card-body {
+    padding: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+</style>
+
+<body>
+  <div class="container" id="cont">
+  <div class="card">
+    <div class="card-header">
+      <h2 class="mb-0">Registrar Proveedor</h2>
+    </div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+
+
+      {% if messages %}
+  <div class="alert alert-info" role="alert">
+    {% for message in messages %}
+      {{ message }}
+    {% endfor %}
+  </div>
+{% endif %}
+
+        {{ form.non_field_errors }}
+        <div class="form-group">
+          <label for="{{ form.base_url.id_for_label }}">Base URL</label>
+<input type="url" class="form-control {% if form.base_url.errors %}is-invalid{% endif %}" id="{{ form.base_url.id_for_label }}" name="{{ form.base_url.html_name }}" value="{% if form.base_url.value %}{{ form.base_url.value }}{% endif %}">
+          {% for error in form.base_url.errors %}
+          <div class="invalid-feedback">{{ error|safe }}</div>
+          {% endfor %}
+        </div>
+        <div class="form-signin-buttons d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary" style="width: 200px; height: 45px; font-size: 16px;margin-right: 10px">Registrar</button>
+<a class="btn btn-lg btn-secondary" style="width: 140px; height: 45px; font-size: 16px;" onclick="goBack()">Atrás</a>
+
+
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+
+    <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var exampleUrl = 'https://publicaciones.uci.cu/index.php/serie/oai';
+    var baseUrlInput = document.querySelector('#id_base_url');
+
+    baseUrlInput.placeholder = 'Ejemplo: ' + exampleUrl;
+
+  });
+</script>
+
+    <script>
+    function goBack() {
+  history.back();
+}
+    </script>
+{% endblock %}

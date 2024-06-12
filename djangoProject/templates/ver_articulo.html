@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}Ver articulo{% endblock %}
+{% block content %}
+
+<div class="card card-sm mx-auto h-auto" style="margin-top: 50px; width: 1000px; margin-bottom: 50px">
+  <div class="card-header">
+    <h1><a href="{% url 'ver_revista' articulo.header.proveedor.id %}">{{ articulo.header.proveedor.repository_name }}</a></h1>
+  </div>
+  <div class="card-body">
+    <h2>{{ articulo.title }}</h2>
+
+    <hr>
+
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Publicado por:</strong> {{ articulo.publisher }}</p>
+        <p><strong>Fecha:</strong> {{ articulo.date }}</p>
+        <p><strong>Formato:</strong> {{ articulo.format }}</p>
+        <p><strong>Idioma:</strong> {{ articulo.language }}</p>
+        <p><strong>Derechos:</strong> {{ articulo.rights }}</p>
+      </div>
+
+      <div class="col-md-6">
+        <p><strong>Autores:</strong></p>
+        <ul>
+          {% for creator in articulo.creator %}
+            <li>{{ creator }}</li>
+          {% endfor %}
+        </ul>
+        <p><strong>Fuentes:</strong></p>
+        <ul>
+          {% for fuente in articulo.source %}
+            <li>{{ fuente }}</li>
+          {% endfor %}
+        </ul>
+        <p><strong>Tipos de recurso:</strong></p>
+        <ul>
+          {% for tipo_recurso in articulo.resource_types %}
+            <li>{{ tipo_recurso }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+
+    <p><strong>Descripción:</strong></p>
+    <p>{{ articulo.description }}</p>
+
+    <p><strong>URL:</strong> <a href="{{ articulo.identifier_url }}">{{ articulo.identifier_url }}</a></p>
+
+    <p><strong>Archivo:</strong> <a href="{{ articulo.relation }}">{{ articulo.relation }}</a></p>
+
+   {% if request.user.usuario.rol.nombre == 'Especialista' %}
+      <a href="{% url 'modificar_articulo' articulo.id %}" class="btn btn-primary" style="margin-bottom: 10px">Modificar Articulo</a>
+    </div>
+  {% endif %}
+
+  </div>
+
+
+
+<style>
+
+
+
+  ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+
+
+
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+{% endblock %}
+
+
+
+

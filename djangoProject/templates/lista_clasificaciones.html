@@ -1,0 +1,133 @@
+<!-- lista_revistas.html -->
+
+{% extends 'base.html' %}
+{% block title %}Lista de clasificaciones{% endblock %}
+{% block content %}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+#card1{
+       height: 450px;
+            width: 80%;
+     
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+.card-body {
+  overflow-y: auto;
+}
+
+</style>
+{#<body>#}
+{##}
+{##}
+{#{% if messages %}#}
+{#  <ul class="messages">#}
+{#    {% for message in messages %}#}
+{#      <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>#}
+{#    {% endfor %}#}
+{#  </ul>#}
+{#{% endif %}#}
+{##}
+{#<div class="container">#}
+{#  <div class="row">#}
+{#    <div class="col-md-6">#}
+{#      <h2>Clasificaciones y Subclasificaciones</h2>#}
+{#      <div id="accordion">#}
+{#        {% for clasificacion, subclasificaciones in clasificaciones_con_subclasificaciones.items %}#}
+{#          <div class="card">#}
+{#            <div class="card-header" id="heading{{ clasificacion.id }}">#}
+{#              <h5 class="mb-0">#}
+{#                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ clasificacion.id }}" aria-expanded="true" aria-controls="collapse{{ clasificacion.id }}">#}
+{#                  {{ clasificacion.valor }}#}
+{#                </button>#}
+{#              </h5>#}
+{#            </div>#}
+{##}
+{#            <div id="collapse{{ clasificacion.id }}" class="collapse" aria-labelledby="heading{{ clasificacion.id }}" data-parent="#accordion">#}
+{#              <div class="card-body">#}
+{#                <ul class="list-group">#}
+{#                  {% for subclasificacion in subclasificaciones %}#}
+{#                    <li class="list-group-item"> <a href="{% url 'listar_revistas' subclasificacion.id %}">{{ subclasificacion.valor }}</a>.</li>#}
+{#                  {% endfor %}#}
+{#                </ul>#}
+{#              </div>#}
+{#            </div>#}
+{#          </div>#}
+{#        {% endfor %}#}
+{#      </div>#}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
+{##}
+{#<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>#}
+{#<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>#}
+{#<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>#}
+{##}
+{#<script>#}
+{#  // Script para expandir y contraer las subclasificaciones al hacer clic en una clasificación#}
+{#  const buttons = document.querySelectorAll('.btn-link');#}
+{#  buttons.forEach(button => {#}
+{#    button.addEventListener('click', (event) => {#}
+{#      event.preventDefault(); // Evita el comportamiento predeterminado del botón#}
+{##}
+{#      const targetId = button.getAttribute('data-target');#}
+{#      const target = document.querySelector(targetId);#}
+{#      const isExpanded = target.classList.contains('show');#}
+{##}
+{#      if (isExpanded) {#}
+{#        button.setAttribute('aria-expanded', 'false');#}
+{#        target.classList.remove('show');#}
+{#      } else {#}
+{#        button.setAttribute('aria-expanded', 'true');#}
+{#        target.classList.add('show');#}
+{#      }#}
+{#    });#}
+{#  });#}
+    
+<div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+  <div class="card" id="card1" style="width: 80%; margin-top: 100px;">
+    <div class="card-body" style="overflow-y: auto;">
+      <h2 class="card-title">Clasificaciones y subclasificaciones</h2>
+      <div id="accordion">
+        {% for clasificacion, subclasificaciones in clasificaciones_con_subclasificaciones.items %}
+          <div class="card">
+            <div class="card-header" id="heading{{ clasificacion.id }}">
+              <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ clasificacion.id }}" aria-expanded="true" aria-controls="collapse{{ clasificacion.id }}">
+                  {{ clasificacion.valor }}
+                </button>
+              </h5>
+            </div>
+
+            <div id="collapse{{ clasificacion.id }}" class="collapse" aria-labelledby="heading{{ clasificacion.id }}" data-parent="#accordion">
+              <div class="card-body">
+                <ul class="list-group">
+                  {% for subclasificacion in subclasificaciones %}
+                    <li class="list-group-item"><a href="{% url 'listar_revistas' subclasificacion.id %}">{{ subclasificacion.valor }}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+  // Script para expandir y contraer las subclasificaciones al hacer clic en una clasificación
+  $('#accordion .btn-link').click(function(e) {
+    e.preventDefault();
+    $(this).toggleClass('active');
+    $(this).closest('.card').find('.collapse').collapse('toggle');
+  });
+</script>
+
+
+{% endblock %}

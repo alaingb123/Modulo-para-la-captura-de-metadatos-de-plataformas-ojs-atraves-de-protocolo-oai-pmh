@@ -1,0 +1,245 @@
+
+{% extends 'base.html' %}
+{% block title %}Artículos para el año {{ year }} y la revista <h1 href="{% url 'ver_revista' proveedor.id %}">{{ proveedor.repository_name}}</h1>{% endblock %}
+{% block content %}
+  <title></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 30px;
+    }
+
+    h3 {
+      margin-top: 20px;
+    }
+
+    ul {
+      padding-left: 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    li {
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 30px;
+    }
+  </style>
+
+<body>
+
+<div class="card mx-auto "style="margin-top: 50px; max-height: 520px; width: 1200px; overflow-y: scroll;">
+    <h1 style="margin-top: 10px">Artículos para el año {{ year }} y la revista <a href="{% url 'ver_revista' proveedor.id %}">{{ proveedor.repository_name}}</a></h1>
+{% if page_obj %}
+{% for objeto in page_obj %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Volumen: {{ objeto.volumen.volumen }}</h3>
+        </div>
+        <div class="card-body">
+
+                {% if objeto.numeros %}
+                    {% for numero_objeto in objeto.numeros %}
+                        {% if numero_objeto.articulos %}
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h3 class="card-title">Número: {{ numero_objeto.numero.numero }}</h3>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group">
+                                        {% for articulo in numero_objeto.articulos %}
+                                            <li class="list-group-item">
+                                                <a href="{% url 'ver_articulo' articulo.id %}">{{ articulo.title }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+
+            <!-- Agregar enlaces de paginación -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="first">
+                                &laquo; first
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                                previous
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">{{ page_obj.number }}</a>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                                next
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">
+                                last &raquo;
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
+
+{% if page_vol %}
+    <h3>Volumen: {{ vol }}</h3>
+    {% for objeto in page_vol %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Número: {{ objeto.numero.numero }}</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for articulo in objeto.articulos %}
+                        <li class="list-group-item">
+                            <a href="{% url 'ver_articulo' articulo.id %}">{{ articulo.title }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endfor %}
+
+    <!-- Agregar enlaces de paginación -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_vol.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_vol.previous_page_number }}" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Anterior</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item active" aria-current="page">
+                <span class="page-link">
+                    Página {{ page_vol.number }} de {{ page_vol.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_vol.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_vol.next_page_number }}" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Siguiente</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item">
+                <form class="form-inline" method="get" action="">
+                    <input class="form-control" type="number" name="page" min="1" max="{{ page_vol.paginator.num_pages }}" value="{{ page_vol.number }}">
+                    <button class="btn btn-primary" type="submit">Ir</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+{% endif %}
+
+
+   {% if numeros_objetos %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Volumen: {{ vol.volumen }}</h3>
+        </div>
+        <div class="card-body">
+            {% for objeto in numeros_objetos %}
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h3 class="card-title">Número: {{ objeto.numero.numero }}</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for articulo in objeto.articulos %}
+                        <li class="list-group-item">
+                            <a href="{% url 'ver_articulo' articulo.id %}">{{ articulo.title }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Agregar enlaces de paginación -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if page.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.previous_page_number }}" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Anterior</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">
+                            Página {{ page.number }} de {{ page.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page.next_page_number }}" aria-label="Siguiente">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Siguiente</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="page-item">
+                        <form class="form-inline" method="get" action="">
+                            <input class="form-control" type="number" name="page" min="1" max="{{ page.paginator.num_pages }}"
+                                value="{{ page.number }}">
+                            <button class="btn btn-primary" type="submit">Ir</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</div>
+</body>
+{% endblock %}

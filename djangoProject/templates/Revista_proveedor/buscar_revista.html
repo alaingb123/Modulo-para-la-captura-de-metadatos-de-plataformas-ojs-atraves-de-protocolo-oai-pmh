@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Buscar Revistas{% endblock %}
+{% block content %}
+
+
+<body>
+  <div class="card card-sm mx-auto mt-6" style="margin-top: 50px;width: 900px;margin-bottom: 50px  ">
+    <div class="card-header">
+      <h1>Buscar revistas</h1>
+    </div>
+      <div class="card-body" style="max-height: 800px;height: 800px; " >
+    <div class="container" style="margin-top: 10px">
+      <form method="GET" action="{% url 'buscar_revistas' %}">
+        <div class="form-row">
+          <div class="col-md-6 mb-3">
+            <label for="nombre">Nombre:</label>
+            <input {% if nombre %}value="{{ nombre }}" {% endif %} type="text" class="form-control" id="nombre" name="nombre" >
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="clasificacion">Clasificación:</label>
+            {% for clasificacion in clasificaciones %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox"  {% if clasificacion.valor in clasificaciones_seleccionadas %} checked {% endif %}  name="clasificacion" id="{{ clasificacion }}" value="{{ clasificacion }}">
+              <label class="form-check-label" for="{{ clasificacion }}">
+                {{ clasificacion }}
+              </label>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+     <div class="form-row" style="margin-bottom: 50px">
+  <div class="col-md-6 mb-3 d-flex justify-content-between">
+    <div class="btn-group">
+      <button class="btn btn-primary btn-block" type="submit" style="margin-right: 10px;height: 40px;margin-top: 5px">Buscar</button>
+     <button class="btn btn-secondary btn-block" id="limpiar" name="limpiar" type="submit" style="height: 40px;margin-top: 5px">Limpiar</button>
+    </div>
+  </div>
+</div>
+      </form>
+<div class="container" style="max-height: 500px;height: 500px;overflow-y: scroll;">
+      <table class="table" >
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Clasificación</th>
+            <th>Subclasificación</th>
+          </tr>
+        </thead>
+        <tbody >
+          {% for revista in revistas %}
+          <tr>
+
+            <td><a href="{% url 'ver_revista' revista.proveedor.id %}">{{ revista.proveedor.repository_name }}</a></td>
+            <td>{% for sub in revista.subclasificacion.all  %} <ul >{{ sub.clasificacion }}  </ul> {% endfor %}</td>
+
+            <td>{% for sub in revista.subclasificacion.all  %} <a href="{% url 'listar_revistas' sub.id %}">{{ sub.valor }}  </a> {% endfor %}</td>
+
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3">No se encontraron revistas.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+</div>
+
+      <nav aria-label="Navegación de páginas">
+        <ul class="pagination justify-content-center">
+          {% if revistas.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ revistas.previous_page_number }}">Anterior</a>
+          </li>
+          {% endif %}
+          {% for num in revistas.paginator.page_range %}
+          {% if revistas.number == num %}
+          <li class="page-item active">
+            <a class="page-link" href="#">{{ num }}</a>
+          </li>
+          {% else %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endif %}
+          {% endfor %}
+          {% if revistas.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ revistas.next_page_number }}">Siguiente</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+</body>
+{% endblock %}

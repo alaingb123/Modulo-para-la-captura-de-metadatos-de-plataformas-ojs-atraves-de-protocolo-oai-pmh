@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Modificar Revista{% endblock %}
+{% block content %}
+<style>
+
+</style>
+<div class="container my-5" >
+    <div class="card card-body shadow-sm" style="overflow-y: scroll; max-height: 500px;margin-top: 55px">
+        <h1 class="card-title mb-4">Modificar Revista</h1>
+        <form method="POST" class="form-group">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    {% for field in form.visible_fields %}
+                        {% if forloop.counter <= 4 %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                    {% for field in form.visible_fields %}
+                        {% if forloop.counter > 4 %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                 <div class="d-flex justify-content-center" style="margin-top: 30px; height: 70px;">
+    <button type="submit" class="btn btn-primary" style="width: 250px">Guardar Cambios</button>
+</div>
+                </div>
+            </div>
+
+        </form>
+ </div>
+<a href="{% url 'ver_revista' revista.proveedor.id %}" class="btn btn-link mt-3 text-left">Cancelar y volver a los detalles de la revista</a>
+
+</div>
+
+    <script>
+    document.getElementById('my-form').addEventListener('submit', function(event) {
+        var issnInput = document.getElementById('id_issn_e');
+        var issnValue = issnInput.value.trim();
+
+        var numberRegex = /^[0-9]+$/;
+
+        if (issnValue.length !== 8 || !numberRegex.test(issnValue)) {
+            event.preventDefault();
+            alert('Ingrese un ISSN válido de 8 dígitos.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}
